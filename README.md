@@ -6,7 +6,7 @@ For this project, we were given trading data for 12 different green energy compa
 ### Purpose
 The purpose of this project was to refactor a previously written VBA macro that was created to run analysis on the trading volume and the return on investment (ROI) for the aforementioned stocks. The result of the analysis should inform which green energy companies are the best investments, based on how the stock value grew or fell over time.
 
-The initial VBA code was written as part of the Module 2 VBA segments, and the deliverable for the Module 2 challenge is to sucessfully refactor the code in a way that makes it run more efficiently. Streamlining code to operate more efficiently is critical when you are working with large data sets.
+The initial VBA code was written as part of the Module 2 VBA segments. The deliverable for the Module 2 challenge is to sucessfully refactor the code in a way that makes it run more efficiently, using the vbs code template provided as a starting place. Streamlining code to operate more efficiently is critical when you are working with large data sets.
 
 ## Results
 Green energy stock had a positive ROI overall in 2017 and a negative ROI in 2018.
@@ -39,9 +39,79 @@ By refactoring our code we did see a significant reduction in run time. For the 
 My hypothesis is that the delta on pre and post refactoring run-time differences would increase if our data set increases, so the refactoring will pay off if we need to work with much larger data sets. 
 
 ### Refactored macro
-Below, I have included a screenshot the refactored macro. To review the full orginal macro and the refactored macro, please reference the .xlsm doc linked to this project. 
+Below, I have included the main section of refactored code. To review the full orginal macro, and the refactored macro, please reference the .xlsm doc linked to this project. 
 
-![Refactored VBA Code](https://user-images.githubusercontent.com/103781847/166119428-f777f519-a94d-4c1b-a84f-ade55d0f94a2.png)
+```
+  '1a) Create a ticker Index
+
+        tickerIndex = 0
+
+    '1b) Create three output arrays
+    
+        Dim tickerVolumes(12) As Long
+        
+        Dim tickerStartingPrices(12) As Single
+        
+        Dim tickerEndingPrices(12) As Single
+    
+    '2a) Create a for loop to initialize the tickerVolumes to zero.
+    
+        For i = 0 To 11
+
+            tickerVolumes(i) = 0
+            
+        Next i
+     
+    '2b) Loop over all the rows in the spreadsheet.
+        
+        For j = 2 To RowCount
+    
+        '3a) Increase volume for current ticker
+        
+         tickerVolumes(tickerIndex) = tickerVolumes(tickerIndex) + Cells(j, 8).Value
+        
+        '3b) Check if the current row is the first row with the selected tickerIndex.
+        
+        'If  Then
+        
+            If Cells(j, 1).Value = tickers(tickerIndex) And Cells(j - 1, 1).Value <> tickers(tickerIndex) Then
+    
+                tickerStartingPrices(tickerIndex) = Cells(j, 6).Value
+                
+        'End If
+            End If
+        
+        '3c) check if the current row is the last row with the selected ticker
+         'If the next row’s ticker doesn’t match, increase the tickerIndex.
+        
+        'If  Then
+            
+            If Cells(j, 1).Value = tickers(tickerIndex) And Cells(j + 1, 1).Value <> tickers(tickerIndex) Then
+            
+                tickerEndingPrices(tickerIndex) = Cells(j, 6).Value
+            
+                '3d Increase the tickerIndex.
+            
+                        tickerIndex = tickerIndex + 1
+    
+            End If
+    
+        Next j
+    
+    '4) Loop through your arrays to output the Ticker, Total Daily Volume, and Return.
+        
+    For i = 0 To 11
+        
+        Worksheets("All Stocks Analysis").Activate
+        
+        Cells(4 + i, 1).Value = tickers(i)
+        
+        Cells(4 + i, 2).Value = tickerVolumes(i)
+        
+        Cells(4 + i, 3).Value = tickerEndingPrices(i) / tickerStartingPrices(i) - 1
+        
+    Next i 
+``` 
 
 ## Project Summary
 
